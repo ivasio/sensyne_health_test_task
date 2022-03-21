@@ -63,6 +63,9 @@ class ReadingResponse(BaseModel):
         example='2021-01-01T12:00:00+00:00',
     )
 
+    class Config:
+        orm_mode = True
+
 
 class ReadingUpdateRequest(BaseModel):
     patient_uuid: Optional[UUID] = Field(

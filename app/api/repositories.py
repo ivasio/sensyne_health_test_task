@@ -2,20 +2,35 @@ from typing import List
 from uuid import UUID
 
 from .models import ReadingCreateRequest, ReadingResponse, ReadingUpdateRequest
+from .db import readings, database
 
 
 class ReadingsRepo:
-    def get_all(self) -> List[ReadingResponse]:
-        ...
+    @staticmethod
+    async def get_all() -> List[ReadingResponse]:
+        query = readings.select()
+        rows = await database.fetch_all(query)
+        result = [ReadingResponse.from_orm(row) for row in rows]
+        return result
 
-    def add(self, *, reading: ReadingCreateRequest) -> None:
-        ...
+    @staticmethod
+    async def add(*, reading: ReadingCreateRequest) -> None:
+        query = readings.insert().values(**reading.dict())
+        await database.execute(query)
 
-    def get(self, uuid: UUID) -> ReadingResponse:
-        pass
+    @staticmethod
+    async def get(uuid: UUID) -> ReadingResponse:
+        query = readings.select().where(reading_uuid=uuid)
+        row = await database.fetch_one(query)
+        result = ReadingResponse.from_orm(row)
+        return result
 
-    def update(self, uuid: UUID, reading: ReadingUpdateRequest) -> None:
-        ...
+    @staticmethod
+    async def update(uuid: UUID, reading: ReadingUpdateRequest) -> None:
+        query = readings.update().where(reading_uuid=uuid).values(**reading.dict(exclude_none=True))
+        await database.execute(query)
 
-    def delete(self, uuid: UUID):
-        ...
+    @staticmethod
+    async def delete(uuid: UUID):
+        query = readings.delete().where(reading_uuid=uuid)
+        await database.execute(query)
