@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .api.routes import router
+from api.routes import router
 
 app = FastAPI(
     description='A service for managing the blood glucose readings of diabetes patients',

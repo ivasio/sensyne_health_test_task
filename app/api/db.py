@@ -1,10 +1,24 @@
+from pydantic import BaseSettings
 import databases
 import sqlalchemy
 
-DATABASE_URL = "sqlite:///./test.db"
-# DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
-database = databases.Database(DATABASE_URL)
+class DbSettings(BaseSettings):
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_HOST: str = 'db'
+    POSTGRES_PORT: int = 5432
+
+    @property
+    def db_url(self) -> str:
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@" \
+               f"{self.POSTGRES_HOST}:{self.POSTGRES_PORT}"
+
+
+db_settings = DbSettings()
+print(db_settings.db_url)
+
+database = databases.Database(db_settings.db_url)
 
 metadata = sqlalchemy.MetaData()
 
@@ -19,7 +33,5 @@ readings = sqlalchemy.Table(
 )
 
 
-engine = sqlalchemy.create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine = sqlalchemy.create_engine(db_settings.db_url)
 metadata.create_all(engine)
