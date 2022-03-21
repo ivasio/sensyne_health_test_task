@@ -47,18 +47,20 @@ async def get_v1_reading_reading_uuid(reading_uuid: UUID) -> ReadingResponse:
 @router.put('/reading/{reading_uuid}', response_model=None)
 async def put_v1_reading_reading_uuid(
     reading_uuid: UUID, body: ReadingUpdateRequest = ...
-) -> None:
+):
     """
     Update a reading by UUID
     """
     repo = ReadingsRepo()
     await repo.update(uuid=reading_uuid, reading=body)
+    return Response(status_code=204)
 
 
 @router.delete('/reading/{reading_uuid}', response_model=None)
-async def delete_v1_reading_reading_uuid(reading_uuid: UUID) -> None:
+async def delete_v1_reading_reading_uuid(reading_uuid: UUID):
     """
     Delete a reading by UUID
     """
     repo = ReadingsRepo()
     await repo.delete(uuid=reading_uuid)
+    return Response(status_code=204)

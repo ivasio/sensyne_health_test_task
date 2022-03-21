@@ -1,10 +1,7 @@
-import uuid
-
 import databases
 import pytz as pytz
 import sqlalchemy
 from pydantic import BaseSettings
-from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import UUID
 
 

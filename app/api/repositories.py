@@ -22,17 +22,17 @@ class ReadingsRepo:
 
     @staticmethod
     async def get(*, uuid: UUID) -> ReadingResponse:
-        query = readings.select().where(reading_uuid=uuid)
+        query = readings.select().where(readings.columns.reading_uuid == uuid)
         row = await database.fetch_one(query)
         result = ReadingResponse.from_orm(row)
         return result
 
     @staticmethod
     async def update(uuid: UUID, reading: ReadingUpdateRequest) -> None:
-        query = readings.update().where(reading_uuid=uuid).values(**reading.dict(exclude_none=True))
+        query = readings.update().where(readings.columns.reading_uuid == uuid).values(**reading.dict(exclude_none=True))
         await database.execute(query)
 
     @staticmethod
     async def delete(uuid: UUID):
-        query = readings.delete().where(reading_uuid=uuid)
+        query = readings.delete().where(readings.columns.reading_uuid == uuid)
         await database.execute(query)
