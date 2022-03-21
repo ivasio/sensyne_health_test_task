@@ -3,7 +3,9 @@ from __future__ import annotations
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
+from fastapi.encoders import jsonable_encoder
+from starlette.responses import JSONResponse
 
 from .models import ReadingCreateRequest, ReadingResponse, ReadingUpdateRequest
 from .repositories import ReadingsRepo
@@ -23,12 +25,13 @@ async def get_v1_reading() -> List[ReadingResponse]:
 
 
 @router.post('/reading', response_model=None)
-async def post_v1_reading(body: ReadingCreateRequest) -> None:
+async def post_v1_reading(body: ReadingCreateRequest):
     """
     Create a new reading
     """
     repo = ReadingsRepo()
-    await repo.add(reading=body)
+    result = await repo.add(reading_request=body)
+    return JSONResponse(status_code=201, content=jsonable_encoder(result))
 
 
 @router.get('/reading/{reading_uuid}', response_model=ReadingResponse)

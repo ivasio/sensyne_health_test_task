@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import uuid
 from datetime import datetime
 from enum import Enum
 from typing import Optional
@@ -17,7 +18,13 @@ class Unit(Enum):
     mg_dL = 'mg/dL'
 
 
-class ReadingCreateRequest(BaseModel):
+class Model(BaseModel):
+    class Config:
+        orm_mode = True
+        use_enum_values = True
+
+
+class ReadingCreateRequest(Model):
     patient_uuid: UUID = Field(
         ...,
         description='The UUID of the patient who took the reading',
@@ -38,9 +45,9 @@ class ReadingCreateRequest(BaseModel):
     )
 
 
-class ReadingResponse(BaseModel):
+class ReadingResponse(Model):
     reading_uuid: UUID = Field(
-        ...,
+        default_factory=uuid.uuid4,
         description='The UUID of the reading',
         example='1faafa60-c19a-4dd1-b5b0-e1d55f9464d4',
     )
@@ -63,11 +70,8 @@ class ReadingResponse(BaseModel):
         example='2021-01-01T12:00:00+00:00',
     )
 
-    class Config:
-        orm_mode = True
 
-
-class ReadingUpdateRequest(BaseModel):
+class ReadingUpdateRequest(Model):
     patient_uuid: Optional[UUID] = Field(
         None,
         description='The UUID of the patient who took the reading',

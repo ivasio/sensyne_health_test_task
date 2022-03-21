@@ -1,6 +1,11 @@
-from pydantic import BaseSettings
+import uuid
+
 import databases
+import pytz as pytz
 import sqlalchemy
+from pydantic import BaseSettings
+from sqlalchemy import text
+from sqlalchemy.dialects.postgresql import UUID
 
 
 class DbSettings(BaseSettings):
@@ -16,18 +21,15 @@ class DbSettings(BaseSettings):
 
 
 db_settings = DbSettings()
-print(db_settings.db_url)
-
 database = databases.Database(db_settings.db_url)
-
 metadata = sqlalchemy.MetaData()
 
 readings = sqlalchemy.Table(
     "readings",
     metadata,
-    sqlalchemy.Column("reading_uuid", sqlalchemy.String, primary_key=True),
-    sqlalchemy.Column("patient_uuid", sqlalchemy.String),
-    sqlalchemy.Column("recorded_at", sqlalchemy.DateTime),
+    sqlalchemy.Column("reading_uuid", UUID(as_uuid=True), primary_key=True),
+    sqlalchemy.Column("patient_uuid", UUID(as_uuid=True)),
+    sqlalchemy.Column("recorded_at", sqlalchemy.DateTime(timezone=pytz.UTC)),
     sqlalchemy.Column("unit", sqlalchemy.String),
     sqlalchemy.Column("value", sqlalchemy.Float),
 )

@@ -1,5 +1,5 @@
 from typing import List
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from .models import ReadingCreateRequest, ReadingResponse, ReadingUpdateRequest
 from .db import readings, database
@@ -14,12 +14,14 @@ class ReadingsRepo:
         return result
 
     @staticmethod
-    async def add(*, reading: ReadingCreateRequest) -> None:
+    async def add(*, reading_request: ReadingCreateRequest) -> ReadingResponse:
+        reading = ReadingResponse.from_orm(reading_request)
         query = readings.insert().values(**reading.dict())
         await database.execute(query)
+        return reading
 
     @staticmethod
-    async def get(uuid: UUID) -> ReadingResponse:
+    async def get(*, uuid: UUID) -> ReadingResponse:
         query = readings.select().where(reading_uuid=uuid)
         row = await database.fetch_one(query)
         result = ReadingResponse.from_orm(row)
