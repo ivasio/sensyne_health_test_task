@@ -58,7 +58,8 @@ class ReadingResponse(BaseModel):
     )
     recorded_at: datetime = Field(
         ...,
-        description='The timestamp at which the reading was recorded, in ISO8601 format (see https://en.wikipedia.org/wiki/ISO_8601)',
+        description='The timestamp at which the reading was recorded, in ISO8601 format '
+                    '(see https://en.wikipedia.org/wiki/ISO_8601)',
         example='2021-01-01T12:00:00+00:00',
     )
 
@@ -78,6 +79,7 @@ class ReadingUpdateRequest(BaseModel):
     )
     recorded_at: Optional[datetime] = Field(
         None,
-        description='The timestamp at which the reading was recorded, in ISO8601 format (see https://en.wikipedia.org/wiki/ISO_8601)',
+        description='The timestamp at which the reading was recorded, in ISO8601 format '
+                    '(see https://en.wikipedia.org/wiki/ISO_8601)',
         example='2021-01-01T12:00:00+00:00',
     )
